@@ -1,2 +1,2 @@
 # MiniProject-SemIII
-aws mini project
+aws mini project sem III - Daksh Purohit
