@@ -8,7 +8,7 @@ root.title("InkAlchemy Translator")
 textExample = tk.Text(root, height=10)
 textExample.pack()
 
-def get_text(target_language_code):
+def get_text1(target_language_code):
     aws_mag_con = boto3.session.Session(profile_name='MiniProjectIIIDEMO')
     client = aws_mag_con.client(service_name='translate', region_name='ap-south-1')
     result = textExample.get("1.0", "end")
@@ -21,15 +21,16 @@ def get_text(target_language_code):
 
 # Function to translate to Hindi
 def translate_to_hindi():
-    get_text('hi')
+    get_text1('hi')
+    pass
 
 # Function to translate to Spanish
 def translate_to_spanish():
-    get_text('es')
+    get_text1('es')
 
 # Function to translate to French
 def translate_to_french():
-    get_text('fr')
+    get_text1('fr')
 
 btnRead = tk.Button(root, height=1, width=10, text="Hindi", command=translate_to_hindi)
 btnRead.pack()
