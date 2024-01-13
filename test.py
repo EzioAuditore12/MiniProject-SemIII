@@ -1,49 +1,50 @@
+#for testing functionextract with tkinter
+
 import tkinter as tk
-from tkinter import ttk
-from ttkthemes import ThemedTk
-import sys
-import os
-from tempfile import gettempdir
-from contextlib import closing
+from tkinter import filedialog
+from PIL import Image, ImageTk
+import boto3
 
-# Create the main window
-root = ThemedTk(theme="radiance")  # You can try other themes like 'arc', 'equilux', etc.
-root.geometry("600x400")  # Increase the size of the main window
-root.title("InkAlchemy")
-root.configure(bg='AliceBlue') 
-# Create a style to use for widgets
-style = ttk.Style()
-style.configure("TLabel", font=("Helvetica", 24, "bold"), background="#3498db", foreground="black")  # Increase the font size of the "InkAlchemy" text
+var1 = tk.Tk()
+var1.geometry("450x400")
+var1.title("InkAlchemy")
+l1 = tk.Label(var1, text="Upload an image", width=30, font=('times', 18, 'bold'))
+l1.pack()
 
-# Create the headline
-headline = ttk.Label(root, text="   InkAlchemy  ", style="TLabel")
-headline.pack(pady=30)  # Increase the padding below the "InkAlchemy" text
+# Initialize the Textract client
+aws_mag_con = boto3.session.Session(profile_name='MiniProjectIIIDEMO')
+client = aws_mag_con.client(service_name='textract', region_name='ap-south-1')
 
-# Define a custom style for buttons
-style.configure("TButton", font=("Helvetica", 12), background="#2ecc71", foreground="black", padding=5)
+def upload_file(root):
+    global img, img_tk  # Add img_tk to the global variables
+    f_types = [('Jpg Files', '*.jpg')]
+    filename = filedialog.askopenfilename(filetypes=f_types)
+    if filename:  # Check if a file was selected
+        img = Image.open(filename)
 
-# Dynamically import the entire module
-def import_module(module_name):
-    return __import__(module_name)
+        # Resize the image to fit the dialogue
+        img_resize = img.resize((400, 200))
+        img_tk = ImageTk.PhotoImage(img_resize)
 
-# Define the command for each button
-def call_function(imported_module):
-    # Call specific functions from the module as needed
-    imported_module.upload_file()
-    # Add other function calls as needed
+        # Display the image on a button
+        img_button = tk.Button(root, image=img_tk)
+        img_button.image = img_tk  # Store a reference to the image in the button
+        img_button.pack()
 
-btn_extract = ttk.Button(root, text="Extract handwritten text", style="TButton", command=lambda: call_function(import_module('functionextract')))
-btn_extract.pack(pady=5)
+        with open(filename, 'rb') as imgfile:
+            imgbytes = imgfile.read()
 
-btn_translator = ttk.Button(root, text="Translator", style="TButton", command=lambda: call_function(import_module('functiontranslator')))
-btn_translator.pack(pady=5)
+        # Use the correct client when calling detect_document_text
+        response = client.detect_document_text(Document={'Bytes': imgbytes})
+        for item in response['Blocks']:
+            if item['BlockType'] == 'LINE':
+                print(item['Text'])
 
-btn_senitmenanalysis = ttk.Button(root, text="Sentiment analysis of text", style="TButton", command=lambda: call_function(import_module('senitmenanalysis')))
-btn_senitmenanalysis.pack(pady=5)
+def get_image_byte(filename):
+    with open(filename, 'rb') as imgfile:
+        return imgfile.read()
 
+b1 = tk.Button(var1, text='Upload file to see its content in text', width=30, command=lambda: upload_file(var1))
+b1.pack()
 
-btn_texttospeech = ttk.Button(root, text="Text to speech", style="TButton", command=lambda: call_function(import_module('texttospeech')))
-btn_texttospeech.pack(pady=5)
-
-# Start the tkinter event loop
-root.mainloop()
+var1.mainloop()
