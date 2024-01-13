@@ -20,12 +20,6 @@ def getText2():
 
     print(f"The prominent sentiment is: {prominent_sentiment}")
     print(f"Sentiment Score is: {response['SentimentScore'][prominent_sentiment]}")
-    print("Major text is:")
-    if 'KeyPhrases' in response:
-        for ph in response['KeyPhrases']:
-            print(ph['Text'])
-    else:
-        print("No KeyPhrases found in the response.")
 
 
 btnRead = tk.Button(root, height=1, width=10, text="Read", command=getText2)
