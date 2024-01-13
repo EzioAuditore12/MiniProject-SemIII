@@ -12,7 +12,7 @@ def import_module(module_name):
 
 # Create the main window
 root = ThemedTk(theme="radiance")  # You can try other themes like 'arc', 'equilux', etc.
-root.geometry("600x600")  # Increase the size of the main window
+root.geometry("700x550")  # Increase the size of the main window
 root.title("InkAlchemy")
 root.configure(bg='AliceBlue') 
 

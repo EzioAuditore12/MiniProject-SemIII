@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageOps  # Add ImageOps here
 import boto3
 
 # Initialize the Textract client
@@ -14,8 +14,11 @@ def upload_file(root):
     if filename:  # Check if a file was selected
         img = Image.open(filename)
 
+        # Correct the orientation of the image
+        img = ImageOps.exif_transpose(img)
+
         # Resize the image to fit the dialogue
-        img_resize = img.resize((400, 200))
+        img_resize = img.resize((600, 200))
         img_tk = ImageTk.PhotoImage(img_resize)
 
         # Display the image on a button
